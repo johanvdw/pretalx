@@ -6891,13 +6891,13 @@ msgid "Please provide a link or upload a file!"
 msgstr ""
 
 #: pretalx/submission/forms/submission.py:17
-msgid "Additional Speaker"
+msgid "Additional Devroom Organiser"
 msgstr ""
 
 #: pretalx/submission/forms/submission.py:19
 msgid ""
 "If you have a fellow devroom organiser, please add their email address here, and we will "
-"invite them to create an account. If you have more than one co-speaker, you "
+"invite them to create an account. If you have more than one fellow devroom organizer, you "
 "can add more speakers after finishing the proposal process."
 msgstr ""
 
