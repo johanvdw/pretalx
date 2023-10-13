@@ -14,9 +14,9 @@ from pretalx.submission.models import Question, Submission, SubmissionStates
 
 class InfoForm(CfPFormMixin, RequestRequire, PublicContent, forms.ModelForm):
     additional_speaker = forms.EmailField(
-        label=_("Additional Speaker"),
+        label=_("Additional Devroom Organiser"),
         help_text=_(
-            "If you have a co-speaker, please add their email address here, and we will invite them to create an account. If you have more than one co-speaker, you can add more speakers after finishing the proposal process."
+            "If you have an additional devroom organiser, please add their email address here, and we will invite them to create an account. If you have more than one extra organiser, you can add them after finishing the proposal process."
         ),
         required=False,
     )

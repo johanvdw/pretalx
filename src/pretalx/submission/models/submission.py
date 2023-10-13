@@ -888,7 +888,7 @@ class Submission(LogMixin, GenerateCode, FileCleanupMixin, models.Model):
             or _(
                 """Hi!
 
-I'd like to invite you to be a speaker in the session
+I'd like to invite you to be a fellow devroom managger in the session
 
   “{title}”
 

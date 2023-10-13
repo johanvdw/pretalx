@@ -4196,7 +4196,7 @@ msgid "Description"
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/text.html:110
-msgid "Additional speakers"
+msgid "Additional devroom organisers"
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/text.html:116 pretalx/schedule/forms.py:18
@@ -6896,7 +6896,7 @@ msgstr ""
 
 #: pretalx/submission/forms/submission.py:19
 msgid ""
-"If you have a co-speaker, please add their email address here, and we will "
+"If you have a fellow devroom organiser, please add their email address here, and we will "
 "invite them to create an account. If you have more than one co-speaker, you "
 "can add more speakers after finishing the proposal process."
 msgstr ""

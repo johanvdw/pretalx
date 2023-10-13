@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class SubmissionInvitationForm(forms.Form):
-    speaker = forms.EmailField(label=_("Speaker email"))
+    speaker = forms.EmailField(label=_("Devroom organiser email"))
     subject = forms.CharField(label=_("Subject"))
     text = forms.CharField(widget=forms.Textarea(), label=_("Text"))
 
@@ -17,7 +17,7 @@ class SubmissionInvitationForm(forms.Form):
         initial["text"] = _(
             """Hi!
 
-I'd like to invite you to be a speaker in the session
+I'd like to invite you to be a fellow devroom organiser in the session
 
   “{title}”
 
