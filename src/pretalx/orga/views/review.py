@@ -33,7 +33,7 @@ from pretalx.submission.models import Review, Submission, SubmissionStates
 class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
     template_name = "orga/review/dashboard.html"
     permission_required = "orga.view_review_dashboard"
-    paginate_by = None
+    paginate_by = 200
     usable_states = (
         SubmissionStates.SUBMITTED,
         SubmissionStates.ACCEPTED,
