@@ -14,6 +14,7 @@ from django.views.generic import DetailView, ListView, TemplateView, UpdateView,
 from django_context_decorator import context
 
 from pretalx.cfp.flow import CfPFlow
+from pretalx.cfp.signals import on_save_track
 from pretalx.common.forms import I18nFormSet
 from pretalx.common.mixins.views import (
     ActionFromUrl,
@@ -24,6 +25,7 @@ from pretalx.common.mixins.views import (
 from pretalx.common.utils import I18nStrJSONEncoder
 from pretalx.common.views import CreateOrUpdateView, OrderModelView
 from pretalx.orga.forms import CfPForm, QuestionForm, SubmissionTypeForm, TrackForm
+
 from pretalx.orga.forms.cfp import (
     AccessCodeSendForm,
     AnswerOptionForm,
@@ -522,6 +524,7 @@ class TrackDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
     def form_valid(self, form):
         form.instance.event = self.request.event
         result = super().form_valid(form)
+        on_save_track.send(form.instance.event, event=self.request.event, request=self.request,form=form.cleaned_data)
         messages.success(self.request, _("The track has been saved."))
         if form.has_changed():
             action = "pretalx.track." + ("update" if self.object else "create")
@@ -588,6 +591,7 @@ class AccessCodeDetail(PermissionRequired, CreateOrUpdateView):
     def form_valid(self, form):
         form.instance.event = self.request.event
         result = super().form_valid(form)
+
         if form.has_changed():
             action = "pretalx.access_code." + ("update" if self.object else "create")
             form.instance.log_action(action, person=self.request.user, orga=True)
