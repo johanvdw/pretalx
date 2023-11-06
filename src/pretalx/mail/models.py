@@ -129,6 +129,7 @@ class MailTemplate(PretalxModel):
             try:
                 subject = str(self.subject).format(**context)
                 text = str(self.text).format(**context)
+                reply_to=str(self.reply_to).format(**context)
                 if full_submission_content and "submission" in context_kwargs:
                     text += "\n\n\n***********\n\n" + str(
                         _("Full proposal content:\n\n")
@@ -146,7 +147,7 @@ class MailTemplate(PretalxModel):
                 event=event or self.event,
                 template=self,
                 to=address,
-                reply_to=self.reply_to,
+                reply_to=reply_to,
                 bcc=self.bcc,
                 subject=subject,
                 text=text,
