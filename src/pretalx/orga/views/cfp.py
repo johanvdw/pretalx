@@ -524,7 +524,7 @@ class TrackDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
     def form_valid(self, form):
         form.instance.event = self.request.event
         result = super().form_valid(form)
-        on_save_track.send(form.instance.event, event=self.request.event, request=self.request,form=form.cleaned_data)
+        on_save_track.send(form.instance.event, track=self.object, request=self.request, form=form.cleaned_data)
         messages.success(self.request, _("The track has been saved."))
         if form.has_changed():
             action = "pretalx.track." + ("update" if self.object else "create")
