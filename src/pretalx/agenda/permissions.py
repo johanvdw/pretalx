@@ -12,6 +12,13 @@ def is_agenda_visible(user, event):
         and event.current_schedule
     )
 
+@rules.predicate
+def is_agenda_exportable(user, event):
+    return bool(
+        event
+        and event.is_public
+        and event.current_schedule
+    )
 
 @rules.predicate
 def is_widget_always_visible(user, event):
@@ -91,6 +98,9 @@ def is_speaker_viewable(user, profile):
 
 rules.add_perm(
     "agenda.view_schedule", (has_agenda & is_agenda_visible) | can_change_submissions
+)
+rules.add_perm(
+    "agenda.export_schedule", (has_agenda & is_agenda_exportable) | can_change_submissions
 )
 rules.add_perm(
     "agenda.view_featured_submissions",

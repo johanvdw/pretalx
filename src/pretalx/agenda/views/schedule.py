@@ -64,7 +64,7 @@ class ScheduleMixin:
 
 
 class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
-    permission_required = "agenda.view_schedule"
+    permission_required = "agenda.export_schedule"
 
     def get_context_data(self, **kwargs):
         result = super().get_context_data(**kwargs)
