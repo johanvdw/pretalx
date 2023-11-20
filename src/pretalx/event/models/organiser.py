@@ -195,6 +195,7 @@ The {organiser} team"""
             to=self.email,
             subject=str(invitation_subject),
             text=str(invitation_text),
+            locale='en'
         )
         mail.send()
         return mail
