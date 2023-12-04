@@ -4,7 +4,10 @@
 		#main-wrapper
 			#unassigned(v-scrollbar.y="", @pointerenter="isUnassigning = true", @pointerleave="isUnassigning = false")
 				.title
-					bunt-input#filter-input(v-model="unassignedFilterString", :placeholder="$t('Filter sessions')", icon="search")
+					select#filter-track(v-model="unassignedFilterTrack")
+						option(v-if="!tracksLookup", disabled) All tracks
+						option(v-else, v-for="(value, key) in tracksLookup" :key="key" :value="key")
+							| {{ tracksLookup[key].name.en }}
 					#unassigned-sort(@click="showUnassignedSortMenu = !showUnassignedSortMenu", :class="{'active': showUnassignedSortMenu}")
 						i.fa.fa-sort
 					#unassigned-sort-menu(v-if="showUnassignedSortMenu")
@@ -107,6 +110,7 @@ export default {
 			isUnassigning: false,
 			locales: ["en"],
 			unassignedFilterString: '',
+			unassignedFilterTrack: '',
 			unassignedSort: 'title',
 			unassignedSortDirection: 1,  // asc
 			showUnassignedSortMenu: false,
@@ -140,7 +144,7 @@ export default {
 		unscheduled () {
 			if (!this.schedule) return
 			let sessions = []
-			for (const session of this.schedule.talks.filter(s => !s.start || !s.room)) {
+			for (const session of this.schedule.talks.filter(s => (!s.start || !s.room))) {
 				sessions.push({
 					id: session.id,
 					code: session.code,
@@ -152,12 +156,9 @@ export default {
 					state: session.state,
 				})
 			}
-			if (this.unassignedFilterString.length) {
-				sessions = sessions.filter(s => {
-					const title = getLocalizedString(s.title)
-					const speakers = s.speakers?.map(s => s.name).join(', ') || ''
-					return title.toLowerCase().includes(this.unassignedFilterString.toLowerCase()) || speakers.toLowerCase().includes(this.unassignedFilterString.toLowerCase())
-				})
+			if (this.unassignedFilterTrack) {
+				console.log(this.unassignedFilterTrack);
+				sessions = sessions.filter(s => s.track.id==this.unassignedFilterTrack)
 			}
 			// Sort by this.unassignedSort, this.unassignedSortDirection (1 or -1)
 			sessions = sessions.sort((a, b) => {
