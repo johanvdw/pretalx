@@ -63,7 +63,7 @@ export default {
 			gridOffset: 0,
 			dragScrollTimer: null,
 			dragStart: null,
-			hiddenRooms: [],
+			hiddenRooms: [...this.rooms]
 		}
 	},
 	computed: {
