@@ -555,4 +555,7 @@ export default {
 							padding: 0
 		.warning
 			color: #b23e65
+.title select#filter-track {
+			max-width: 100%;
+		}
 </style>
