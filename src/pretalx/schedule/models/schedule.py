@@ -606,6 +606,7 @@ class Schedule(PretalxModel):
                     context_kwargs={"user": speaker},
                     context={"notifications": notifications},
                     commit=save,
+                    skip_queue=True,
                     locale=locale,
                     attachments=[
                         {
