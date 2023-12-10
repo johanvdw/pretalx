@@ -92,6 +92,23 @@
                     </div>
                 </div>
             {% endif %}
+            {% if submission.resources %}
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label">Resources</label>
+                    <div class="col-md-9 mt-1">
+                      <ul>
+                      {% for resource in submission.resources.all %}
+                        {% if resource.resource %}
+                        <li><a href="{{resource.url}}" target="_blank">{{ resource.resource.name }}</a></li>
+                        {% else %}
+                        <li><a href="{{resource.url}}" target="_blank">{{resource.url}}</a></li>
+                        {% endif %}
+
+                      {% endfor %}
+                      </ul>
+                    </div>
+                </div>
+            {% endif %}
             {% if request.event.cfp.request_notes %}
                 <div class="form-group row">
                     <label class="col-md-3 col-form-label">{% translate "Notes" %}</label>
