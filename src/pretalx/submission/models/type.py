@@ -56,21 +56,7 @@ class SubmissionType(PretalxModel):
 
     def __str__(self) -> str:
         """Used in choice drop downs."""
-        if not self.default_duration:
-            return str(self.name)
-        if self.default_duration > 60 * 24:
-            return _("{name} ({duration} days)").format(
-                name=self.name,
-                duration=pleasing_number(round(self.default_duration / 60 / 24, 1)),
-            )
-        if self.default_duration > 90:
-            return _("{name} ({duration} hours)").format(
-                name=self.name,
-                duration=pleasing_number(round(self.default_duration / 60, 1)),
-            )
-        return _("{name} ({duration} minutes)").format(
-            name=self.name, duration=self.default_duration
-        )
+        return str(self.name)
 
     @property
     def slug(self) -> str:
