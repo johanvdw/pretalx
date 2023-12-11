@@ -574,6 +574,7 @@ export default {
 	bottom: 0
 	right: 0
 	width: 300px;
+
 	background-color: $clr-white
 	padding: 8px 16px
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3)
@@ -581,9 +582,14 @@ export default {
 	font-size: 16px
 
 	.room-list
-		display: none
+		display: none;
+		overflow-y: scroll;
+		max-height: 100%;
+
+
 
 	&:hover
+		height: 100%;
 		.room-list
 			display: block
 
