@@ -123,7 +123,7 @@ export default {
 		// border: border-separator()
 		background-color: $clr-grey-200
 		border-radius: 6px
-		display: flex
+		display: none
 		justify-content: center
 		align-items: center
 		.info .title
