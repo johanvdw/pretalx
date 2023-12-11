@@ -131,6 +131,9 @@ class MailTemplate(PretalxModel):
                 text = str(self.text).format(**context)
                 if self.reply_to is not None:
                     reply_to=str(self.reply_to).format(**context)
+                else:
+                    reply_to=None
+
                 if full_submission_content and "submission" in context_kwargs:
                     text += "\n\n\n***********\n\n" + str(
                         _("Full proposal content:\n\n")
