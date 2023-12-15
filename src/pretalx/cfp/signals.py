@@ -58,3 +58,8 @@ on_save_track = EventPluginSignal()
 """
 This signal is triggered when the Track form is received and is triggered after saving it.
 """
+extra_user_settings = EventPluginSignal()
+"""
+This signal allow one to enter extra options in the user profile screen.
+"""
+on_save_user = EventPluginSignal()
