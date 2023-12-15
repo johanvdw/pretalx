@@ -47,7 +47,11 @@
                 </a> |
                 <a href="?{% url_replace request "page_size" "100" "page" "1" %}">
                     {% if page_size == 100 %}<strong>{% endif %}100{% if page_size == 100 %}</strong>{% endif %}
+                </a> |
+                <a href="?{% url_replace request "page_size" "200" "page" "1" %}">
+                    {% if page_size == 200 %}<strong>{% endif %}200{% if page_size == 200 %}</strong>{% endif %}
                 </a>
+
             </div>
         {% endif %}
     </nav>
