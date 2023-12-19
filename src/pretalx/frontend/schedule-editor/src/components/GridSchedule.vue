@@ -583,13 +583,13 @@ export default {
 
 	.room-list
 		display: none;
-		overflow-y: scroll;
 		max-height: 100%;
 
 
 
 	&:hover
 		height: 100%;
+		overflow-y: scroll;
 		.room-list
 			display: block
 
