@@ -64,7 +64,7 @@
             </div>
         </form>
     {% endif %}
-    {% html_signal "pretalx.cfp.signals.extra_user_settings" sender=request.event %}
+    {% html_signal "pretalx.cfp.signals.extra_user_settings" sender=request.event request=request %}
     <h2>{% translate "Your Account" %}</h2>
     <p>
         {% translate "You can change your log in data here." %}
