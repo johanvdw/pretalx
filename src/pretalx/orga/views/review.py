@@ -307,7 +307,7 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
         if total["accept"] or total["reject"]:
             msg = str(
                 _(
-                    "Success! {accepted} proposals were accepted, {rejected} proposals were rejected."
+                    "Success! {accepted} proposals were accepted, {rejected} proposals were rejected. Please make sure acceptance/refusal mails are sent from the outbox"
                 )
             ).format(accepted=total["accept"], rejected=total["reject"])
             if total["error"]:
