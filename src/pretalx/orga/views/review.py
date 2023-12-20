@@ -533,6 +533,7 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
             self.request.event,
             self.request.user,
             ignore=ignored_submissions,
+            track=self.submission.track
         ).first()
         # try again in same track without ignored
         if not next_submission:
@@ -543,7 +544,8 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
                 self.request.event,
                 self.request.user,
                 ignore=ignored_submissions,
-            ).filter(track=self.submission.track).first()
+                track=self.submission.track
+            ).first()
         if not next_submission:
             # Finally switch to all tracks
             next_submission = Review.find_missing_reviews(
