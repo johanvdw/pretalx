@@ -381,7 +381,19 @@ class Submission(GenerateCode, PretalxModel):
             self.save(update_fields=["state", "pending_state"])
             self.update_talk_slots()
             return
+
         if force or new_state in valid_next_states:
+            # FOSDEM specific change - requires tracksetting to be set on the track
+            # (it is on all our tracks)
+
+            if person not in self.speakers.all() and person not in self.track.tracksettings.manager_team.members.all():
+                raise SubmissionError(
+                        "State can only be changed by submitter (confirm/withdraw) or track/devroom manager")
+
+            if person not in self.track.tracksettings.manager_team.members.all() and new_state==SubmissionStates.ACCEPTED:
+                raise SubmissionError(
+                        "Talks can only be accepted by track/devroom manager")
+
             old_state = self.state
             self.state = new_state
             self.pending_state = None
