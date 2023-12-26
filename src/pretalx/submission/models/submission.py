@@ -378,6 +378,7 @@ class Submission(GenerateCode, PretalxModel):
                 raise SubmissionError(
                         "State can only be changed by submitter (confirm/withdraw) or track/devroom manager")
 
+            # extra check to make sure devroom manager can not accept his own talk in a different track
             if person not in self.track.tracksettings.manager_team.members.all() and new_state==SubmissionStates.ACCEPTED:
                 raise SubmissionError(
                         "Talks can only be accepted by track/devroom manager")
