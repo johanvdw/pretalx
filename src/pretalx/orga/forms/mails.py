@@ -44,6 +44,12 @@ class MailTemplateBase(I18nHelpText, I18nModelForm):
             _("Available placeholders:") + " " + available_placeholders
         )
 
+        self.fields["cc"].initial = "{track_mail}"
+        self.fields["reply_to"].initial = "{track_mail}"
+        self.fields["reply_to"].help_text = "{track_mail} will expand to the devroom manager generic mail address."
+        self.fields[
+            "cc"].help_text = "{track_mail} will expand to the devroom manager generic mail address"
+
     def _clean_for_placeholders(self, text, valid_placeholders):
         cleaned_data = super().clean()
         valid_placeholders = set(valid_placeholders)
@@ -116,7 +122,7 @@ class MailTemplateForm(ReadOnlyFlag, MailTemplateBase):
 
     class Meta:
         model = MailTemplate
-        fields = ["subject", "text", "reply_to", "bcc"]
+        fields = ["subject", "text", "reply_to", "cc", "bcc"]
 
 
 class DraftRemindersForm(MailTemplateForm):
@@ -375,4 +381,4 @@ class WriteMailForm(MailTemplateBase):
 
     class Meta:
         model = MailTemplate
-        fields = ["subject", "text", "bcc", "reply_to"]
+        fields = ["subject", "text", "cc", "bcc", "reply_to"]
