@@ -144,13 +144,65 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
         data = super().clean()
         start = data.get("start")
         end = data.get("end")
-        if start and end and start > end:
+        if (start and not end) or (end and not start):
+            self.add_error(
+                "start",
+                forms.ValidationError(
+                    _("Both start and end have to be supplied or none of them."),
+                ),
+            )
+        if start and end and start >= end:
             self.add_error(
                 "end",
                 forms.ValidationError(
                     _("The end time has to be after the start time."),
                 ),
             )
+        if start and end:
+            duration = (end-start).total_seconds()/60
+            if duration % 5 != 0:
+                self.add_error(
+                    "end",
+                    forms.ValidationError(
+                        _("The duration of a session should be a multiple of 5 minutes"),
+                    ),
+                )
+            if duration > 480:
+                self.add_error(
+                    "end",
+                    forms.ValidationError(
+                        _("The duration of a session should be less than 480 minutes"),
+                    ),
+                )
+
+            # check for overlapping talks in same room
+            schedule = self.event.wip_schedule
+            slot = (
+                self.instance.slots.filter(schedule=schedule)
+                .order_by("start")
+                .first()
+            )
+            slot.room = self.cleaned_data.get("room")
+            slot.start = self.cleaned_data.get("start")
+            slot.end = self.cleaned_data.get("end")
+
+            warnings = schedule.get_talk_warnings(
+                slot,
+                with_speakers=True,
+                room_avails=None,
+                speaker_avails=None,
+                speaker_profiles=None)
+            if len(warnings) > 0:
+                print(warnings)
+                message_list=[i["message"] for i in warnings]
+                self.add_error(
+                    "start",
+                    forms.ValidationError(
+                        f"Scheduling errors occur: {', '.join(message_list)}",
+                    ),
+                )
+
+
         return data
 
     def save(self, *args, **kwargs):
