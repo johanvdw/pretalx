@@ -163,6 +163,7 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
             "score": ("current_score", "state", "code"),
             "my_score": ("user_score", "current_score", "state", "code"),
             "count": ("review_nonnull_count", "code"),
+            "state": ("state", "current_score", "title")
         }
         ordering = self.request.GET.get("sort", "default")
         reverse = True

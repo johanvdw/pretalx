@@ -215,7 +215,9 @@
                         <th class="d-none col-duration">{% translate "Duration" %}</th>
                         {% if show_submission_types %}<th class="col-subtype d-none">{% translate "Type" %}</th>{% endif %}
                         {% if filter_form.tags %}<th class="col-tags">{% translate "Tags" %}</th>{% endif %}
-                        <th class="col-state">{% translate "State" %}</th>
+                        <th class="col-state">{% translate "State" %}
+                        <a href="?{% url_replace request 'sort' 'state' %}"><i class="fa fa-caret-down" title="{% translate "Sort by state (highest first)" %}"></i></a>
+                            <a href="?{% url_replace request 'sort' '-state' %}"><i class="fa fa-caret-up" title="{% translate "Sort by state" %}"></i></a></th>
                         <th><span class="action-row d-flex justify-space-around">
                             {% if can_accept_submissions %}
                                 <div class="radio form-check accept">
