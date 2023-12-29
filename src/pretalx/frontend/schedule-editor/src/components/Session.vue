@@ -6,15 +6,20 @@
 			.ampm(v-if="startTime.ampm") {{ startTime.ampm }}
 		.duration {{ durationPretty }}
 	.info
-		.title {{ getLocalizedString(session.title) }}
+		.title(v-if="warnings?.length")
+			| ERROR: {{ getLocalizedString(session.title) }}
+		.title(v-else)
+			| {{ getLocalizedString(session.title) }}
 		.speakers(v-if="session.speakers") {{ session.speakers.map(s => s.name).join(', ') }}
 		.bottom-info
 			.track(v-if="session.track") {{ getLocalizedString(session.track.name) }}
-	.warning(v-if="warnings?.length")
+
+	.warning(v-if="warnings?.length" )
 		.warning-icon.text-danger
 			span(v-if="warnings.length > 1") {{ warnings.length }}
 			i.fa.fa-exclamation-triangle
-</template>
+
+	</template>
 <script>
 import moment from 'moment-timezone'
 import MarkdownIt from 'markdown-it'
@@ -61,6 +66,7 @@ export default {
 			else {
 				classes.push('istalk')
 				if (this.session.state !== "confirmed") classes.push('unconfirmed')
+				if (this.warnings?.length > 0) classes.push('warnings')
 			}
 			if (this.isDragged) classes.push('dragging')
 			if (this.isDragClone) classes.push('clone')
@@ -136,6 +142,9 @@ export default {
 			opacity: 0.5
 		.info
 			background-image: repeating-linear-gradient(-38deg, $clr-grey-100, $clr-grey-100 10px, $clr-white 10px, $clr-white 20px)
+	&.warnings
+		.info
+			background-color: #f1807e
 	&.istalk
 		.time-box
 			width: 69px
@@ -169,7 +178,6 @@ export default {
 			border: border-separator()
 			border-left: none
 			border-radius: 0 6px 6px 0
-			background-color: $clr-white
 			min-width: 0
 			.title
 				font-size: 16px
@@ -186,6 +194,7 @@ export default {
 					color: var(--track-color)
 					ellipsis()
 					margin-right: 4px
+
 		&:hover
 			.info
 				border: 1px solid var(--track-color)
