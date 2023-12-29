@@ -10,8 +10,9 @@ $(function() {
 
   $(".datetimepickerfield").each(function() {
     $(this).datetimepicker({
-      format: $("body").attr("data-datetimeformat"),
+      format: "YYYY-MM-DD HH:mm",
       locale: $("body").attr("data-datetimelocale"),
+      stepping: 5,
       useCurrent: false,
       showClear: !$(this).prop("required"),
       icons: {
