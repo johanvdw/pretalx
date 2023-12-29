@@ -198,8 +198,8 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
             # separate warnings from errors
             errors=[]
             for warning in warnings:
-                if warning["message"].endswith("is not available at the scheduled time.") and warning["type"] == "speaker":
-                    # speaker not available, warning, not error
+                if warning["type"] in ["speaker_available", "speaker_nearoverlap"]:
+                    # warning, not error
                     messages.warning(self.request, warning["message"])
                 else:
                     self.add_error(
