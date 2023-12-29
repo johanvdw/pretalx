@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.contrib import messages
 from django.utils.formats import get_format
 from django.utils.translation import gettext as _
 from django_scopes.forms import SafeModelChoiceField, SafeModelMultipleChoiceField
@@ -14,8 +15,9 @@ from pretalx.submission.models import Submission, SubmissionStates, SubmissionTy
 class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
     content_locale = forms.ChoiceField(label=_("Language"))
 
-    def __init__(self, event, anonymise=False, **kwargs):
+    def __init__(self, event, request, anonymise=False, **kwargs):
         self.event = event
+        self.request = request
         initial_slot = {}
         instance = kwargs.get("instance")
         if instance and instance.pk:
@@ -192,15 +194,21 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
                 room_avails=None,
                 speaker_avails=None,
                 speaker_profiles=None)
-            if len(warnings) > 0:
-                print(warnings)
-                message_list=[i["message"] for i in warnings]
-                self.add_error(
-                    "start",
-                    forms.ValidationError(
-                        f"Scheduling errors occur: {', '.join(message_list)}",
-                    ),
-                )
+
+            # separate warnings from errors
+            errors=[]
+            for warning in warnings:
+                if warning["message"].endswith("is not available at the scheduled time.") and warning["type"] == "speaker":
+                    # speaker not available, warning, not error
+                    messages.warning(self.request, warning["message"])
+                else:
+                    self.add_error(
+                        "start",
+                        forms.ValidationError(
+                            f"Scheduling errors occur: {warning['message']}",
+                        )
+                    )
+
 
 
         return data
