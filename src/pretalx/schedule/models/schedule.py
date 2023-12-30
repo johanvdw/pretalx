@@ -467,7 +467,7 @@ class Schedule(PretalxModel):
                     models.Q(start__lt=talk.start - buffer, end__gt=talk.start - buffer)
                     | models.Q(start__lt=talk.real_end + buffer, end__gt=talk.real_end + buffer)
                     | models.Q(start__gt=talk.start - buffer, end__lt=talk.real_end + buffer)
-                ).exclude(pk=talk.pk)
+                ).exclude(pk=talk.pk).exclude(room=talk.room)
                 .exists()
             )
             if near_overlaps:
