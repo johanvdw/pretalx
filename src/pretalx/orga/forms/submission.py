@@ -117,7 +117,7 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
                 initial=initial_slot.get("end"),
             )
         if "abstract" in self.fields:
-            self.fields["abstract"].widget.attrs["rows"] = 2
+            self.fields["abstract"].widget.attrs["rows"] = 8
         if not event.feature_flags["present_multiple_times"]:
             self.fields.pop("slot_count", None)
         if not event.feature_flags["use_tracks"]:
