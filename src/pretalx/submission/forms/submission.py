@@ -48,7 +48,7 @@ class InfoForm(CfPFormMixin, RequestRequire, PublicContent, forms.ModelForm):
         super().__init__(initial=initial, **kwargs)
 
         if "abstract" in self.fields:
-            self.fields["abstract"].widget.attrs["rows"] = 2
+            self.fields["abstract"].widget.attrs["rows"] = 8
 
         self._set_track(instance=instance)
         self._set_submission_types(instance=instance)
