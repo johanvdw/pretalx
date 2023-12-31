@@ -386,13 +386,14 @@ class Submission(GenerateCode, PretalxModel):
             # FOSDEM specific change - requires tracksetting to be set on the track
             # (it is on all our tracks)
 
-            if person not in self.speakers.all() and person not in self.track.tracksettings.manager_team.members.all():
+            if person not in self.speakers.all() and person not in self.track.tracksettings.manager_team.members.all() and not person.is_administrator:
                 raise SubmissionError(
                         "State can only be changed by submitter (confirm/withdraw) or track/devroom manager")
 
-            if person not in self.track.tracksettings.manager_team.members.all() and new_state==SubmissionStates.ACCEPTED:
+            # extra check to make sure devroom manager can not accept his own talk in a different track
+            if person not in self.track.tracksettings.manager_team.members.all() and new_state==SubmissionStates.ACCEPTED and not person.is_administrator:
                 raise SubmissionError(
-                        "Talks can only be accepted by track/devroom manager")
+                        "Talks can only be accepted by track/devroom manager or admin.")
 
             old_state = self.state
             self.state = new_state
