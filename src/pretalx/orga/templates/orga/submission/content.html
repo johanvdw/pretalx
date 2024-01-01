@@ -67,9 +67,9 @@
         {% if form.description %}{% bootstrap_field form.description layout='event' %}{% endif %}
         {% if form.notes %}{% bootstrap_field form.notes layout='event' %}{% endif %}
         <div class="form-group row">
-                <label class="col-md-3 col-form-label">Submission (Last Update)</label>
+                <label class="col-md-3 col-form-label">Submission</label>
                 <div class="col-md-9 mt-1">
-                    {{ submission.created }}({{ submission.updated }})
+                    {{ submission.created }}
                 </div>
             </div>
         {% bootstrap_field form.internal_notes layout='event' %}
