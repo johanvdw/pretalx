@@ -196,7 +196,7 @@
         {% endblocktranslate %}
         <a target="_blank" rel="noopener" href="{{ submission.urls.review.full }}">{{ submission.urls.review.full }}</a>
     </p>
-    {% if submission.state == "submitted" or submission.state == "accepted" %}
+    {% if submission.state == "submitted" %}
         <h3>{% translate "Withdraw proposal" %}</h3>
         <p>
             {% blocktranslate trimmed %}
@@ -228,7 +228,7 @@
                 </a>
             </div>
         </div>
-    {% elif submission.state == "confirmed" %}
+    {% elif submission.state == "confirmed" or submission.state == "accepted" %}
         <h3>{% translate "Cancel proposal" %}</h3>
         <p>
             {% blocktranslate trimmed %}
