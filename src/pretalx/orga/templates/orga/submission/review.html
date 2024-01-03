@@ -140,9 +140,12 @@
                                 {{ speaker.biography|default:'-'|rich_text }}
                             {% endif %}
                             {% if speaker.submissions.count > 1 %}<br><strong>{% translate "Other proposals" %}:</strong>
-                                {% for other_submission in speaker.submissions %}{% if other_submission != submission %}
-                                    <a href="{{ other_submission.orga_urls.reviews }}">{{ other_submission.title }}({{other_submission.track}},  {{other_submission.state}})</a>{% if not forloop.last %}, {% endif %}
-                                {% endif %}{% endfor %}
+                                <ul>
+                                  {% for other_submission in speaker.submissions %}{% if other_submission != submission %}
+                                  <li>
+                                    <a href="{{ other_submission.orga_urls.reviews }}">{{ other_submission.title }}({{other_submission.track}}, {{other_submission.state}})</a>{% if not forloop.last %}, {% endif %}
+                                {% endif %}</li>{% endfor %}
+                                </ul>
                             {% endif %}
                         </div>
                     </div>
