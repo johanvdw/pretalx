@@ -143,7 +143,7 @@
                                 <ul>
                                   {% for other_submission in speaker.submissions %}{% if other_submission != submission %}
                                   <li>
-                                    <a href="{{ other_submission.orga_urls.reviews }}">{{ other_submission.title }} ({{other_submission.track}}, {{other_submission.state}})</a>{% endif %}
+                                    <a href="{{ other_submission.orga_urls.reviews }}">{{ other_submission.title }}({{other_submission.track}}, {{other_submission.state}})</a>
                                 {% endif %}</li>{% endfor %}
                                 </ul>
                             {% endif %}
