@@ -58,15 +58,18 @@
                 </li>
             {% endif %}
         </ul>
-        {% if warnings.talk_warnings %}
+        {% if warnings.talk_warnings_type %}
             <h4>{% translate "Warnings" %}</h4>
-            <ul>
-                {% for talk in warnings.talk_warnings %}
-                    {% for warning in talk.warnings %}
-                        <li><a href="{{ warning.url }}">{{ quotation_open }}{{ talk.talk.submission.title }}{{ quotation_close }}</a>: {{ warning.message }}</li>
+
+                {% for warning_type, warnings in warnings.talk_warnings_type.items %}
+                <h5>{{warning_type}}</h5>
+                <ul>
+                    {% for warning in warnings %}
+                        <li><a href="{{ warning.url }}">{{ quotation_open }}{{ warning.talk_orig.submission.title }}{{ quotation_close }}</a>: {{ warning.message }} <a href="{{ warning.talk.orga_urls.base}}">({{ warning.talk.title}})</a></li>
                     {% endfor %}
+                </ul>
                 {% endfor %}
-            </ul>
+
 
         {% endif %}
 
