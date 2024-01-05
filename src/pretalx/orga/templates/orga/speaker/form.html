@@ -4,7 +4,7 @@
 {% load i18n %}
 {% load rules %}
 {% load static %}
-
+{% load html_signal %}
 {% block title %}{{ form.instance.user.get_display_name }} :: {{ request.event.name }}{% endblock %}
 {% block content %}
     {% if form.biography %}
@@ -78,7 +78,7 @@
         </div>
     </form>
 
-
+    {% html_signal "pretalx.cfp.signals.extra_user_settings" sender=request.event request=request %}
     <h3>{% translate 'Emails' %}</h3>
     {% if mails %}
         {% include 'common/mail_log.html' %}
