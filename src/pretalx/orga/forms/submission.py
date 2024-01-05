@@ -146,13 +146,7 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
         data = super().clean()
         start = data.get("start")
         end = data.get("end")
-        if (start and not end) or (end and not start):
-            self.add_error(
-                "start",
-                forms.ValidationError(
-                    _("Both start and end have to be supplied or none of them."),
-                ),
-            )
+
         if start and end and start >= end:
             self.add_error(
                 "end",
@@ -210,7 +204,6 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
                     )
 
 
-
         return data
 
     def save(self, *args, **kwargs):
@@ -232,8 +225,9 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
                 SubmissionStates.ACCEPTED,
                 SubmissionStates.CONFIRMED,
             )
-            and self.cleaned_data.get("room")
-            and self.cleaned_data.get("start")
+            # Removed to allow removing a talk from a schedule without changing its state
+            #and self.cleaned_data.get("room")
+            #and self.cleaned_data.get("start")
             and any(field in self.changed_data for field in ("room", "start", "end"))
         ):
             slot = (
