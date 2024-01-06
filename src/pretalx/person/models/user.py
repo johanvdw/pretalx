@@ -88,6 +88,15 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
             "Your email address will be used for password resets and notification about your event/proposals."
         ),
     )
+    matrix_id = models.CharField(
+        verbose_name=_("Matrix-id"),
+        help_text="If you have a matrix account (mxid), you can specify it here. "
+        "If you are given a role in the event, we use this to invite you "
+        "to the correct rooms on chat.fosdem.org. "
+        "The format is @username:homeserver.tld",
+        default="",
+        max_length=120
+    )
     is_active = models.BooleanField(
         default=True, help_text="Inactive users are not allowed to log in."
     )

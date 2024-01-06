@@ -33,6 +33,7 @@
         {% endif %}
         {% bootstrap_field profile_form.name layout='event' %}
         {% if profile_form.biography %}{% bootstrap_field profile_form.biography layout='event' %}{% endif %}
+        {% bootstrap_field profile_form.matrix_id layout='event' %}
         {% if profile_form.availabilities %}
             {% compress js %}
                 <script defer src="{% static "vendored/moment-with-locales.js" %}"></script>
