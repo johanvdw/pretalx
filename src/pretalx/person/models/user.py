@@ -95,7 +95,8 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
         "to the correct rooms on chat.fosdem.org. "
         "The format is @username:homeserver.tld",
         default="",
-        max_length=120
+        max_length=120,
+        blank=True
     )
     is_active = models.BooleanField(
         default=True, help_text="Inactive users are not allowed to log in."
