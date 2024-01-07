@@ -192,7 +192,7 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
             # separate warnings from errors
             errors=[]
             for warning in warnings:
-                if warning["type"] in ["speaker_available", "speaker_nearoverlap"]:
+                if warning["type"] in ["speaker_unavailable", "speaker_nearoverlap"]:
                     # warning, not error
                     messages.warning(self.request, warning["message"])
                 else:
