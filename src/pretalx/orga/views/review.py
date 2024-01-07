@@ -159,11 +159,11 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
 
     def sort_queryset(self, queryset):
         order_prevalence = {
-            "default": ("is_assigned", "state", "current_score", "code"),
+            "default": ("state", "pending_state", "current_score", "title"),
             "score": ("current_score", "state", "code"),
             "my_score": ("user_score", "current_score", "state", "code"),
             "count": ("review_nonnull_count", "code"),
-            "state": ("state", "current_score", "title")
+            "state": ("state", "pending_state", "current_score", "title")
         }
         ordering = self.request.GET.get("sort", "default")
         reverse = True
@@ -177,8 +177,10 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
             result = []
             for key in order:
                 value = getattr(obj, key)
-                if value is None:
+                if value is None and key != "pending_state":
                     value = 100 * -int(reverse or -1)
+                if value is None and key=="pending_state":
+                    value = "aaaaa" if reverse else "zzzzzz"
                 result.append(value)
             return tuple(result)
 
