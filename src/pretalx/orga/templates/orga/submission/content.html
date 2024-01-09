@@ -46,6 +46,7 @@
                 {% bootstrap_field form.room layout='event' %}
                 {% bootstrap_field form.start layout='event' %}
                 {% bootstrap_field form.end layout='event' %}
+                {% bootstrap_field form.on_website layout='event' %}
             </div>
         {% endif %}
         {% if form.instance.median_score != None and can_view_all_reviews %}
