@@ -752,10 +752,10 @@ class Submission(GenerateCode, PretalxModel):
         """
         from pretalx.agenda.permissions import is_agenda_visible
 
-        if not is_agenda_visible(None, self.event):
-            return []
-        return self.event.current_schedule.talks.filter(
-            submission=self, is_visible=True
+        #if not is_agenda_visible(None, self.event):
+        #    return []
+        return self.event.wip_schedule.talks.filter(
+            submission=self, start__isnull=False
         ).select_related("room")
 
     @cached_property
