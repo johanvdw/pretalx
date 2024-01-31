@@ -22,7 +22,7 @@ class InfoForm(CfPFormMixin, RequestRequire, PublicContent, forms.ModelForm):
     )
     image = ImageField(
         required=False,
-        label=_("Session image"),
+        label=_("Session image (Logo)"),
         help_text=_("Use this if you want an illustration to go with your proposal."),
     )
     content_locale = forms.ChoiceField(label=_("Language"))
@@ -184,7 +184,6 @@ class InfoForm(CfPFormMixin, RequestRequire, PublicContent, forms.ModelForm):
             "abstract",
             "description",
             "notes",
-            "image",
             "do_not_record",
             "track",
             "duration",
