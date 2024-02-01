@@ -23,7 +23,7 @@ class InfoForm(CfPFormMixin, RequestRequire, PublicContent, forms.ModelForm):
     image = ImageField(
         required=False,
         label=_("Session image (Logo)"),
-        help_text=_("Use this if you want an illustration to go with your proposal."),
+        help_text=_("Use this if you want an illustration to go with your proposal. Note it is scaled to 200x200px on the FOSDEM website, so crop appropriate."),
     )
     content_locale = forms.ChoiceField(label=_("Language"))
 
