@@ -26,6 +26,7 @@ class MailTemplateForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
         self.event = getattr(self, "event", None) or event
         if self.event:
             kwargs["locales"] = self.event.locales
+
         super().__init__(*args, **kwargs)
 
     def _clean_for_placeholders(self, text, valid_placeholders):
@@ -462,10 +463,3 @@ class WriteSessionMailForm(SubmissionFilterForm, WriteMailBaseForm):
             for mail in result:
                 mail.send()
         return result
-<<<<<<< HEAD
-=======
-
-    class Meta:
-        model = MailTemplate
-        fields = ["subject", "text", "cc", "bcc", "reply_to"]
->>>>>>> fosdem_2024
