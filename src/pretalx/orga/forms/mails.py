@@ -136,7 +136,7 @@ class MailTemplateForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
 
     class Meta:
         model = MailTemplate
-        fields = ["subject", "text", "reply_to", "bcc"]
+        fields = ["subject", "text", "reply_to", "cc", "bcc"]
 
 
 class DraftRemindersForm(MailTemplateForm):
@@ -462,3 +462,10 @@ class WriteSessionMailForm(SubmissionFilterForm, WriteMailBaseForm):
             for mail in result:
                 mail.send()
         return result
+<<<<<<< HEAD
+=======
+
+    class Meta:
+        model = MailTemplate
+        fields = ["subject", "text", "cc", "bcc", "reply_to"]
+>>>>>>> fosdem_2024

@@ -46,6 +46,7 @@
                 {% bootstrap_field form.room layout='event' %}
                 {% bootstrap_field form.start layout='event' %}
                 {% bootstrap_field form.end layout='event' %}
+                {% bootstrap_field form.on_website layout='event' %}
             </div>
         {% endif %}
         {% if form.instance.median_score != None and can_view_all_reviews %}
@@ -66,6 +67,12 @@
         {% if form.abstract %}{% bootstrap_field form.abstract layout='event' %}{% endif %}
         {% if form.description %}{% bootstrap_field form.description layout='event' %}{% endif %}
         {% if form.notes %}{% bootstrap_field form.notes layout='event' %}{% endif %}
+        <div class="form-group row">
+                <label class="col-md-3 col-form-label">Submission</label>
+                <div class="col-md-9 mt-1">
+                    {{ submission.created }}
+                </div>
+            </div>
         {% bootstrap_field form.internal_notes layout='event' %}
         {% if form.content_locale %}{% bootstrap_field form.content_locale layout='event' %}{% endif %}
         {% if form.do_not_record %}{% bootstrap_field form.do_not_record layout='event' %}{% endif %}

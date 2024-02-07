@@ -54,12 +54,7 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="form-group row">
-                <label class="col-md-3 col-form-label">{% translate "Session Type" %}</label>
-                <div class="col-md-9 mt-1">
-                    {{ submission.submission_type }}
-                </div>
-            </div>
+
             {% if submission.track %}
                 <div class="form-group row">
                     <label class="col-md-3 col-form-label">{% translate "Track" %}</label>
@@ -92,6 +87,24 @@
                     </div>
                 </div>
             {% endif %}
+            {% if submission.resources %}
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label">Resources</label>
+                    <div class="col-md-9 mt-1">
+                      <ul>
+                      {% for resource in submission.resources.all %}
+                        {% if resource.resource %}
+                        <li><a href="{{resource.url}}" target="_blank">{{ resource.resource.name }}</a></li>
+                        {% else %}
+                        <li><a href="{{resource.url}}" target="_blank">{{resource.url}}</a></li>
+                        {% endif %}
+
+                      {% endfor %}
+                      </ul>
+                    </div>
+                </div>
+            {% endif %}
+
             {% if request.event.cfp.request_notes %}
                 <div class="form-group row">
                     <label class="col-md-3 col-form-label">{% translate "Notes" %}</label>
@@ -112,6 +125,12 @@
                     </div>
                 </div>
             {% endfor %}
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label">Submission</label>
+                <div class="col-md-9 mt-1">
+                    {{ submission.created }}
+                </div>
+            </div>
             {% if not anonymise_review %}
                 {% for speaker in profiles %}
                     <div class="form-group row">
@@ -121,9 +140,12 @@
                                 {{ speaker.biography|default:'-'|rich_text }}
                             {% endif %}
                             {% if speaker.submissions.count > 1 %}<br><strong>{% translate "Other proposals" %}:</strong>
-                                {% for other_submission in speaker.submissions %}{% if other_submission != submission %}
-                                    <a href="{{ other_submission.orga_urls.reviews }}">{{ other_submission.title }}</a>{% if not forloop.last %}, {% endif %}
-                                {% endif %}{% endfor %}
+                                <ul>
+                                  {% for other_submission in speaker.submissions %}{% if other_submission != submission %}
+                                  <li>
+                                    <a href="{{ other_submission.orga_urls.reviews }}">{{ other_submission.title }}({{other_submission.track}}, {{other_submission.state}})</a>
+                                {% endif %}</li>{% endfor %}
+                                </ul>
                             {% endif %}
                         </div>
                     </div>

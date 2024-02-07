@@ -85,11 +85,9 @@
                             </td>
                             <td class="flip text-right">
                                 {% if submission.public_slots %}
-                                    <a href="{{ submission.urls.public }}">
                                         {% for talk in submission.public_slots %}
                                             {{ talk.start|date:DAY_MONTH_DATE_FORMAT }}, {{ talk.start|date:"TIME_FORMAT" }}–{{ talk.end|date:"TIME_FORMAT" }}, {{ talk.room.name }} {% if not forloop.last %}<br>{% endif %}
                                         {% endfor %}
-                                    </a>
                                 {% endif %}
                             </td>
                             <td class="flip text-right">

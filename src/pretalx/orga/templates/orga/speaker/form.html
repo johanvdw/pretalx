@@ -4,7 +4,7 @@
 {% load i18n %}
 {% load rules %}
 {% load static %}
-
+{% load html_signal %}
 {% block title %}{{ form.instance.user.get_display_name }} :: {{ request.event.name }}{% endblock %}
 {% block content %}
     {% if form.biography %}
@@ -37,14 +37,14 @@
                     Proposal
                 {% plural %}
                     Proposals
-                {% endblocktranslate %})
+                {% endblocktranslate %}
             </h5>
             <ul>
                 {% for submission in submissions %}
                     <li>
                         <a href="{{ submission.orga_urls.base }}">
-                            {{ submission.title }}
-                            ({% include "cfp/event/fragment_state.html" with state=submission.state %}{% if submission.pending_state %}, {% translate "pending" %}{% include "cfp/event/fragment_state.html"  with state=submission.pending_state %}{% endif %})
+                            {{ submission.title }} ({{ submission.track}},
+                            {% include "cfp/event/fragment_state.html" with state=submission.state %}{% if submission.pending_state %}, {% translate "pending" %}{% include "cfp/event/fragment_state.html"  with state=submission.pending_state %}{% endif %})
                         </a>
                     </li>
                 {% endfor %}
@@ -60,10 +60,13 @@
         {% endif %}
         {% bootstrap_field form.name layout='event' %}
         {% bootstrap_field form.email layout='event' %}
+
         <div class="d-flex mb-4">
             <a href="{{ form.instance.orga_urls.password_reset }}" class="btn btn-info flip flip ml-auto">{% translate "Reset password" %}</a>
         </div>
+
         {% if form.biography %}{% bootstrap_field form.biography layout='event' %}{% endif %}
+
         {% if form.availabilities %}
             {% compress js %}
                 <script defer src="{% static "vendored/moment-with-locales.js" %}"></script>
@@ -72,6 +75,7 @@
             {% include "common/availabilities.html" %}
             {% bootstrap_field form.availabilities layout='event' %}
         {% endif %}
+        {% bootstrap_field form.matrix_id layout='event' %}
         {% bootstrap_form questions_form layout='event' %}
         <div class="submit-group panel">
             <span>
@@ -85,7 +89,7 @@
         </div>
     </form>
 
-
+    {% html_signal "pretalx.cfp.signals.extra_user_settings" sender=request.event request=request %}
     <h3>{% translate 'Emails' %}</h3>
     {% if mails %}
         {% include 'common/mail_log.html' %}

@@ -171,6 +171,16 @@ class ScheduleReleaseView(EventPermissionRequired, FormView):
 
     @context
     def warnings(self):
+        all_warnings=self.request.event.wip_schedule.warnings
+        # restructure talk warnings by type
+        talk_warnings=all_warnings["talk_warnings"]
+        talk_warnings_type = collections.defaultdict(list)
+        for talk_warning in talk_warnings:
+            warnings=talk_warning["warnings"]
+            for warning in warnings:
+                warning["talk_orig"] =talk_warning["talk"]
+                talk_warnings_type[warning["type"]].append(warning)
+        all_warnings["talk_warnings_type"] = dict(talk_warnings_type)
         return self.request.event.wip_schedule.warnings
 
     @context
@@ -375,10 +385,11 @@ class ScheduleWarnings(EventPermissionRequired, View):
     permission_required = "orga.edit_schedule"
 
     def get(self, request, event):
+        all_warnings = self.request.event.wip_schedule.get_all_talk_warnings()
         return JsonResponse(
             {
-                talk.submission.code: warnings
-                for talk, warnings in self.request.event.wip_schedule.get_all_talk_warnings().items()
+                warnings["type"]: warnings
+                for talk, warnings in all_warnings.items()
             }
         )
 

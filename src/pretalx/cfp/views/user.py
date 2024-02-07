@@ -393,8 +393,9 @@ class SubmissionsEditView(LoggedInEventPageMixin, SubmissionViewMixin, UpdateVie
             if not result:
                 return self.get(self.request, *self.args, **self.kwargs)
             if form.has_changed():
-                if form.instance.pk and "duration" in form.changed_data:
-                    form.instance.update_duration()
+                # duration should not be updated by the submitter
+                #if form.instance.pk and "duration" in form.changed_data:
+                #    form.instance.update_duration()
                 if form.instance.pk and "track" in form.changed_data:
                     form.instance.update_review_scores()
                 form.instance.log_action(

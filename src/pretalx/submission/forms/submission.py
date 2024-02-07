@@ -23,8 +23,8 @@ class InfoForm(CfPFormMixin, RequestRequire, PublicContent, forms.ModelForm):
     )
     image = ImageField(
         required=False,
-        label=_("Session image"),
-        help_text=_("Use this if you want an illustration to go with your proposal."),
+        label=_("Session image (Logo)"),
+        help_text=_("Use this if you want an illustration to go with your proposal. Note it is scaled to 200x200px on the FOSDEM website, so crop appropriate."),
     )
     content_locale = forms.ChoiceField(label=_("Language"))
 
@@ -49,7 +49,7 @@ class InfoForm(CfPFormMixin, RequestRequire, PublicContent, forms.ModelForm):
         super().__init__(initial=initial, **kwargs)
 
         if "abstract" in self.fields:
-            self.fields["abstract"].widget.attrs["rows"] = 2
+            self.fields["abstract"].widget.attrs["rows"] = 8
 
         self._set_track(instance=instance)
         self._set_submission_types(instance=instance)
@@ -185,7 +185,6 @@ class InfoForm(CfPFormMixin, RequestRequire, PublicContent, forms.ModelForm):
             "abstract",
             "description",
             "notes",
-            "image",
             "do_not_record",
             "track",
             "duration",

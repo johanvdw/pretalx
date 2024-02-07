@@ -60,7 +60,7 @@ class SubmissionStates(Choices):
     valid_next_states = {
         SUBMITTED: (REJECTED, WITHDRAWN, ACCEPTED),
         REJECTED: (ACCEPTED, SUBMITTED),
-        ACCEPTED: (CONFIRMED, CANCELED, REJECTED, SUBMITTED, WITHDRAWN),
+        ACCEPTED: (CONFIRMED, CANCELED, REJECTED, SUBMITTED),
         CONFIRMED: (ACCEPTED, CANCELED),
         CANCELED: (ACCEPTED, CONFIRMED),
         WITHDRAWN: (SUBMITTED),
@@ -238,6 +238,8 @@ class Submission(GenerateCode, PretalxModel):
         blank=True,
     )
 
+    on_website = models.BooleanField(default=True, blank=False, verbose_name="Export to website", help_text="Set this field to False block export to the website")
+
     objects = ScopedManager(event="event", _manager_class=SubmissionManager)
     deleted_objects = ScopedManager(
         event="event", _manager_class=DeletedSubmissionManager
@@ -369,7 +371,20 @@ class Submission(GenerateCode, PretalxModel):
             self.save(update_fields=["state", "pending_state"])
             self.update_talk_slots()
             return
+
         if force or new_state in valid_next_states:
+            # FOSDEM specific change - requires tracksetting to be set on the track
+            # (it is on all our tracks)
+
+            if person not in self.speakers.all() and person not in self.track.tracksettings.manager_team.members.all() and not person.is_administrator:
+                raise SubmissionError(
+                        "State can only be changed by submitter (confirm/withdraw) or track/devroom manager")
+
+            # extra check to make sure devroom manager can not accept his own talk in a different track
+            if person not in self.track.tracksettings.manager_team.members.all() and new_state==SubmissionStates.ACCEPTED and not person.is_administrator:
+                raise SubmissionError(
+                        "Talks can only be accepted by track/devroom manager")
+
             old_state = self.state
             self.state = new_state
             self.pending_state = None
@@ -745,9 +760,9 @@ class Submission(GenerateCode, PretalxModel):
         """
         from pretalx.agenda.permissions import is_agenda_visible
 
-        if not is_agenda_visible(None, self.event):
-            return []
-        return self.current_slots
+        return self.event.wip_schedule.talks.filter(
+            submission=self, start__isnull=False
+        ).select_related("room")
 
     @cached_property
     def display_speaker_names(self):

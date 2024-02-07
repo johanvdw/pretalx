@@ -3,6 +3,7 @@
 {% load compress %}
 {% load i18n %}
 {% load static %}
+{% load html_signal %}
 
 {% block stylesheets %}
     <link rel="stylesheet" type="text/css" href="{% static "vendored/colorpicker/css/bootstrap-colorpicker.min.css" %}"/>
@@ -31,6 +32,7 @@
         {% bootstrap_field form.description layout='event' %}
         {% bootstrap_field form.color layout='event' addon_before="<i></i>" addon_before_class="colorpicker-input-addon color-visible" %}
         {% bootstrap_field form.requires_access_code layout='event' %}
+        {% html_signal "pretalx.cfp.signals.html_below_track" sender=request.event track=track %}
         {% include "orga/includes/submit_row.html" %}
     </form>
 

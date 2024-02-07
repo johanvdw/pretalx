@@ -6,7 +6,10 @@
 			.ampm(v-if="startTime.ampm") {{ startTime.ampm }}
 		.duration {{ durationPretty }}
 	.info
-		.title {{ getLocalizedString(session.title) }}
+		.title(v-if="warnings?.length")
+			| ERROR: {{ getLocalizedString(session.title) }}
+		.title(v-else)
+			| {{ getLocalizedString(session.title) }}
 		.speakers(v-if="session.speakers") {{ session.speakers.map(s => s.name).join(', ') }}
 		.bottom-info(v-if="!isBreak")
 			.track(v-if="session.track") {{ getLocalizedString(session.track.name) }}
@@ -14,7 +17,8 @@
 		.warning-icon.text-danger
 			span(v-if="warnings.length > 1") {{ warnings.length }}
 			i.fa.fa-exclamation-triangle
-</template>
+
+	</template>
 <script>
 import moment from 'moment-timezone'
 import MarkdownIt from 'markdown-it'
@@ -65,6 +69,7 @@ export default {
 			else {
 				classes.push('istalk')
 				if (this.session.state !== "confirmed") classes.push('unconfirmed')
+				if (this.warnings?.length > 0) classes.push('warnings')
 			}
 			if (this.isDragged) classes.push('dragging')
 			if (this.isDragClone) classes.push('clone')
@@ -125,6 +130,18 @@ export default {
 	&.dragging
 		filter: opacity(0.3)
 		cursor: inherit
+	&.isbreak
+		// border: border-separator()
+		background-color: $clr-grey-200
+		border-radius: 6px
+		display: none
+		justify-content: center
+		align-items: center
+		.info .title
+			font-size: 20px
+			font-weight: 500
+			color: $clr-secondary-text-light
+			align: center
 	&.unconfirmed
 		.time-box
 			opacity: 0.5
@@ -133,6 +150,10 @@ export default {
 	&.isbreak
 		background-color: $clr-grey-200
 		border-radius: 6px
+	&.warnings
+		.info
+			background-color: #f1807e
+	&.istalk
 		.time-box
 			background-color: $clr-grey-500
 			.start
@@ -158,9 +179,22 @@ export default {
 			border-left: none
 			border-radius: 0 6px 6px 0
 			background-color: $clr-white
+			min-width: 0
 			.title
 				font-size: 16px
 				margin-bottom: 4px
+			.speakers
+				color: $clr-secondary-text-light
+			.bottom-info
+				flex: auto
+				display: flex
+				align-items: flex-end
+				.track
+					flex: 1
+					color: var(--track-color)
+					ellipsis()
+					margin-right: 4px
+
 		&:hover
 			.info
 				border: 1px solid var(--track-color)

@@ -1,5 +1,6 @@
 from collections import defaultdict, namedtuple
 from contextlib import suppress
+from datetime import timedelta
 from urllib.parse import quote
 
 from django.conf import settings
@@ -94,7 +95,7 @@ class Schedule(PretalxModel):
         self.talks.filter(
             models.Q(submission__state=SubmissionStates.CONFIRMED)
             | models.Q(submission__isnull=True),
-            start__isnull=False,
+            start__isnull=False, submission__on_website=True
         ).update(is_visible=True)
 
         talks = []
@@ -380,18 +381,22 @@ class Schedule(PretalxModel):
                 | models.Q(start=talk.start, end=talk.real_end)
             )
             .exclude(pk=talk.pk)
-            .exists()
         )
-        if overlaps:
-            warnings.append(
-                {
-                    "type": "room_overlap",
-                    "message": _(
-                        "Another session in the same room overlaps with this one."
-                    ),
-                    "url": url,
-                }
-            )
+        if overlaps.exists():
+            for slot in overlaps:
+                warnings.append(
+                    {
+                        "type": "room_overlap",
+                        "message": _(
+                            "Another session in the same room overlaps with this one."
+                        ),
+                        "url": url,
+                        "other_session": {
+                            "url": slot.submission.orga_urls.base,
+                            "title": slot.submission.title
+                        }
+                    }
+                )
 
         for speaker in talk.submission.speakers.all():
             if with_speakers:
@@ -413,7 +418,7 @@ class Schedule(PretalxModel):
                 ):
                     warnings.append(
                         {
-                            "type": "speaker",
+                            "type": "speaker_unavailable",
                             "speaker": {
                                 "name": speaker.get_display_name(),
                                 "code": speaker.code,
@@ -424,6 +429,7 @@ class Schedule(PretalxModel):
                             "url": url,
                         }
                     )
+
             overlaps = (
                 TalkSlot.objects.filter(
                     schedule=self, submission__speakers__in=[speaker]
@@ -433,16 +439,18 @@ class Schedule(PretalxModel):
                     | models.Q(start__lt=talk.real_end, end__gt=talk.real_end)
                     | models.Q(start__gt=talk.start, end__lt=talk.real_end)
                 )
-                .exists()
+                .exclude(pk=talk.pk)
             )
-            if overlaps:
+
+            for slot in overlaps:
                 warnings.append(
                     {
-                        "type": "speaker",
+                        "type": "speaker_overlap",
                         "speaker": {
                             "name": speaker.get_display_name(),
                             "code": speaker.code,
                         },
+                        "talk": slot.submission,
                         "message": str(
                             _(
                                 "{speaker} is scheduled for another session at the same time."
@@ -452,6 +460,38 @@ class Schedule(PretalxModel):
                     }
                 )
 
+            buffer = timedelta(minutes=30)
+            near_overlaps_qs = (
+                TalkSlot.objects.filter(
+                    schedule=self, submission__speakers__in=[speaker]
+                )
+                .filter(
+                    models.Q(start__lt=talk.start - buffer, end__gt=talk.start - buffer)
+                    | models.Q(start__lt=talk.real_end + buffer, end__gt=talk.real_end + buffer)
+                    | models.Q(start__gt=talk.start - buffer, end__lt=talk.real_end + buffer)
+                ).exclude(pk=talk.pk).exclude(room=talk.room)
+
+            )
+
+            for slot in near_overlaps_qs:
+                warnings.append(
+                    {
+                        "type": "speaker_nearoverlap",
+                        "speaker": {
+                            "name": speaker.get_display_name(),
+                            "id": speaker.pk,
+                        },
+                        "talk": slot.submission,
+                        "message": str(
+                            _(
+                                "{speaker} is scheduled for another session too close (<30 minutes) to the same time."
+                            )
+                        ).format(speaker=speaker.get_display_name()),
+                        "url": url,
+                    }
+                )
+
+        warnings = sorted(warnings, key=lambda x: x['type'])
         return warnings
 
     def get_all_talk_warnings(self, ids=None, filter_updated=None):

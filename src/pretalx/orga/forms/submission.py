@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.contrib import messages
 from django.utils.formats import get_format
 from django.utils.translation import gettext as _
 from django_scopes.forms import SafeModelChoiceField, SafeModelMultipleChoiceField
@@ -14,8 +15,9 @@ from pretalx.submission.models import Submission, SubmissionStates, SubmissionTy
 class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
     content_locale = forms.ChoiceField(label=_("Language"))
 
-    def __init__(self, event, anonymise=False, **kwargs):
+    def __init__(self, event, request, anonymise=False, **kwargs):
         self.event = event
+        self.request = request
         initial_slot = {}
         instance = kwargs.get("instance")
         if instance and instance.pk:
@@ -119,7 +121,7 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
                 initial=initial_slot.get("end"),
             )
         if "abstract" in self.fields:
-            self.fields["abstract"].widget.attrs["rows"] = 2
+            self.fields["abstract"].widget.attrs["rows"] = 8
         if not event.feature_flags["present_multiple_times"]:
             self.fields.pop("slot_count", None)
         if not event.feature_flags["use_tracks"]:
@@ -148,13 +150,64 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
         data = super().clean()
         start = data.get("start")
         end = data.get("end")
-        if start and end and start > end:
+
+        if start and end and start >= end:
             self.add_error(
                 "end",
                 forms.ValidationError(
                     _("The end time has to be after the start time."),
                 ),
             )
+        if start and end:
+            duration = (end-start).total_seconds()/60
+            if duration % 5 != 0:
+                self.add_error(
+                    "end",
+                    forms.ValidationError(
+                        _("The duration of a session should be a multiple of 5 minutes"),
+                    ),
+                )
+            if duration > 480:
+                self.add_error(
+                    "end",
+                    forms.ValidationError(
+                        _("The duration of a session should be less than 480 minutes"),
+                    ),
+                )
+
+            # check for overlapping talks in same room
+            schedule = self.event.wip_schedule
+            slot = (
+                self.instance.slots.filter(schedule=schedule)
+                .order_by("start")
+                .first()
+            )
+            slot.room = self.cleaned_data.get("room")
+            slot.start = self.cleaned_data.get("start")
+            slot.end = self.cleaned_data.get("end")
+
+            warnings = schedule.get_talk_warnings(
+                slot,
+                with_speakers=True,
+                room_avails=None,
+                speaker_avails=None,
+                speaker_profiles=None)
+
+            # separate warnings from errors
+            errors=[]
+            for warning in warnings:
+                if warning["type"] in ["speaker_unavailable", "speaker_nearoverlap"]:
+                    # warning, not error
+                    messages.warning(self.request, warning["message"])
+                else:
+                    self.add_error(
+                        "start",
+                        forms.ValidationError(
+                            f"Scheduling errors occur: {warning['message']}",
+                        )
+                    )
+
+
         return data
 
     def save(self, *args, **kwargs):
@@ -176,8 +229,9 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
                 SubmissionStates.ACCEPTED,
                 SubmissionStates.CONFIRMED,
             )
-            and self.cleaned_data.get("room")
-            and self.cleaned_data.get("start")
+            # Removed to allow removing a talk from a schedule without changing its state
+            #and self.cleaned_data.get("room")
+            #and self.cleaned_data.get("start")
             and any(field in self.changed_data for field in ("room", "start", "end"))
         ):
             slot = (
@@ -208,6 +262,7 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
             "slot_count",
             "image",
             "is_featured",
+            "on_website"
         ]
         widgets = {
             "tags": forms.SelectMultiple(attrs={"class": "select2"}),

@@ -549,6 +549,7 @@ class SubmissionContent(
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["event"] = self.request.event
+        kwargs["request"] = self.request
         instance = kwargs.get("instance")
         kwargs["anonymise"] = getattr(
             instance, "pk", None

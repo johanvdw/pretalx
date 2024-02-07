@@ -160,10 +160,11 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
 
     def sort_queryset(self, queryset):
         order_prevalence = {
-            "default": ("is_assigned", "state", "current_score", "code"),
+            "default": ("state", "pending_state", "current_score", "title"),
             "score": ("current_score", "state", "code"),
             "my_score": ("user_score", "current_score", "state", "code"),
             "count": ("review_nonnull_count", "code"),
+            "state": ("state", "pending_state", "current_score", "title")
         }
         ordering = self.request.GET.get("sort", "default")
         reverse = True
@@ -177,8 +178,10 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
             result = []
             for key in order:
                 value = getattr(obj, key)
-                if value is None:
+                if value is None and key != "pending_state":
                     value = 100 * -int(reverse or -1)
+                if value is None and key=="pending_state":
+                    value = "aaaaa" if reverse else "zzzzzz"
                 result.append(value)
             return tuple(result)
 
@@ -306,7 +309,7 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
         if total["accept"] or total["reject"]:
             msg = str(
                 _(
-                    "Success! {accepted} proposals were accepted, {rejected} proposals were rejected."
+                    "Success! {accepted} proposals were accepted, {rejected} proposals were rejected. Please make sure acceptance/refusal mails are sent from the outbox"
                 )
             ).format(accepted=total["accept"], rejected=total["reject"])
             if total["error"]:
@@ -532,11 +535,21 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
             self.request.event,
             self.request.user,
             ignore=ignored_submissions,
+            track=self.submission.track
         ).first()
+        # try again in same track without ignored
         if not next_submission:
             ignored_submissions = (
                 [self.submission.pk] if action == "skip_for_now" else []
             )
+            next_submission = Review.find_missing_reviews(
+                self.request.event,
+                self.request.user,
+                ignore=ignored_submissions,
+                track=self.submission.track
+            ).first()
+        if not next_submission:
+            # Finally switch to all tracks
             next_submission = Review.find_missing_reviews(
                 self.request.event,
                 self.request.user,

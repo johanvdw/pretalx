@@ -146,7 +146,7 @@ class Review(PretalxModel):
         return f"Review(event={self.submission.event.slug}, submission={self.submission.title}, user={self.user.get_display_name}, score={self.score})"
 
     @classmethod
-    def find_missing_reviews(cls, event, user, ignore=None):
+    def find_missing_reviews(cls, event, user, ignore=None, track=None):
         """Returns all.
 
         :class:`~pretalx.submission.models.submission.Submission` objects this
@@ -194,6 +194,12 @@ class Review(PretalxModel):
                 queryset = queryset.filter(track__in=tracks)
         if ignore:
             queryset = queryset.exclude(pk__in=ignore)
+
+        # if a track is specified, filter by this track to show only results of
+        # the same track
+        if track:
+            queryset = queryset.filter(track=track)
+
         # This is not randomised, because order_by("review_count", "?") sets all annotated
         # review_count values to 1.
         return queryset.order_by("-is_assigned", "review_count")
