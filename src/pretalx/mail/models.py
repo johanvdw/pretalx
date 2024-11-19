@@ -63,6 +63,16 @@ class MailTemplate(PretalxModel):
             "Enter comma separated addresses. Will receive a blind copy of every mail sent from this template. This may be a LOT!"
         ),
     )
+    cc = models.CharField(
+        max_length=1000,
+        blank=True,
+        null=True,
+        verbose_name=_("CC"),
+        help_text=_(
+            "Enter comma separated addresses. Will receive a copy of every mail sent from this template. This may be a LOT!"
+        ),
+    )
+
     # Auto-created templates are created when mass emails are sent out. They are only used to re-create similar
     # emails, and are never shown in a list of email templates or anywhere else.
     is_auto_created = models.BooleanField(default=False)
