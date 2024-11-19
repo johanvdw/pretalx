@@ -49,3 +49,12 @@ As with all plugin signals, the ``sender`` keyword argument will contain the eve
 Additionally, the signal will be called with the ``request`` it is processing.
 The receivers are expected to return HTML.
 """
+html_below_track = EventPluginSignal()
+"""
+This signal allows you to put code inside the tracks page. The receiver should export html,
+it will contain the track when called.
+"""
+on_save_track = EventPluginSignal()
+"""
+This signal is triggered when the Track form is received and is triggered after saving it.
+"""
