@@ -23,6 +23,7 @@ from django.views.generic import (
 from django_context_decorator import context
 
 from pretalx.cfp.flow import CfPFlow
+from pretalx.cfp.signals import on_save_track
 from pretalx.common.forms import I18nFormSet
 from pretalx.common.text.phrases import phrases
 from pretalx.common.text.serialize import I18nStrJSONEncoder
@@ -614,6 +615,8 @@ class TrackDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
     def form_valid(self, form):
         form.instance.event = self.request.event
         result = super().form_valid(form)
+        on_save_track.send(form.instance.event, track=self.object, request=self.request, form=form.cleaned_data)
+
         messages.success(self.request, phrases.base.saved)
         if form.has_changed():
             action = "pretalx.track." + ("update" if self.object else "create")

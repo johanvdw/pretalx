@@ -3,6 +3,7 @@
 {% load compress %}
 {% load i18n %}
 {% load static %}
+{% load html_signal %}
 
 {% block stylesheets %}
 {% endblock stylesheets %}
@@ -25,6 +26,11 @@
         {% endif %}
     </h2>
 
-    {% include "orga/includes/base_form.html" %}
+<form method="post" {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+    {% csrf_token %}
+    {{ form }}
+    {% html_signal "pretalx.cfp.signals.html_below_track" sender=request.event track=track %}
+    {% include "orga/includes/submit_row.html" %}
+</form>
 
 {% endblock content %}
