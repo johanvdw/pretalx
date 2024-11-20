@@ -30,6 +30,14 @@ class MailTemplateForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
         if self.event:
             kwargs["locales"] = self.event.locales
         super().__init__(*args, **kwargs)
+        if "cc" in self.fields:
+            self.fields["cc"].initial = "{track_mail}"
+            self.fields[
+            "cc"].help_text = "{track_mail} will expand to the devroom manager generic mail address"
+        if "reply_to" in self.fields:
+            self.fields["reply_to"].initial = "{track_mail}"
+            self.fields["reply_to"].help_text = "{track_mail} will expand to the devroom manager generic mail address."
+
         self.fields["subject"].required = True
         self.fields["text"].required = True
 
@@ -145,7 +153,7 @@ class MailTemplateForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
 
     class Meta:
         model = MailTemplate
-        fields = ["subject", "text", "reply_to", "bcc"]
+        fields = ["subject", "text", "reply_to", "cc", "bcc"]
 
 
 class DraftRemindersForm(MailTemplateForm):

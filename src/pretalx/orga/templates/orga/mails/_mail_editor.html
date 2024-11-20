@@ -30,6 +30,7 @@
                     <div class="card-body">
                         {% block advanced_recipient_form %}
                             {{ form.reply_to.as_field_group }}
+                            {{ form.cc.as_field_group }}
                             {{ form.bcc.as_field_group }}
                         {% endblock advanced_recipient_form %}
                     </div>
