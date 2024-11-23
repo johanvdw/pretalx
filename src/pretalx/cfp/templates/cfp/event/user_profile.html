@@ -33,6 +33,7 @@
         {% if request.event.cfp.request_avatar %}
             {% include "common/avatar.html" with user=request.user form=profile_form %}
         {% endif %}
+	{{ profile_form.matrix_id.as_field_group }}
         {% if profile_form.availabilities %}
             {% include "common/availabilities.html" %}
             {{ profile_form.availabilities.as_field_group }}
