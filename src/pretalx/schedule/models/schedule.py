@@ -98,7 +98,7 @@ class Schedule(PretalxModel):
         self.talks.filter(
             models.Q(submission__state=SubmissionStates.CONFIRMED)
             | models.Q(submission__isnull=True),
-            start__isnull=False,
+            start__isnull=False, submission__on_website=True
         ).update(is_visible=True)
 
         talks = []
