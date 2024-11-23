@@ -4,7 +4,10 @@
 		#main-wrapper
 			#unassigned.no-print(v-scrollbar.y="", @pointerenter="isUnassigning = true", @pointerleave="isUnassigning = false")
 				.title
-					bunt-input#filter-input(v-model="unassignedFilterString", :placeholder="translations.filterSessions", icon="search")
+					select#filter-track(v-model="unassignedFilterTrack")
+						option(v-if="!tracksLookup", disabled) All tracks
+						option(v-else, v-for="(value, key) in tracksLookup" :key="key" :value="key")
+							| {{ tracksLookup[key].name.en }}
 					#unassigned-sort(@click="showUnassignedSortMenu = !showUnassignedSortMenu", :class="{'active': showUnassignedSortMenu}")
 						i.fa.fa-sort
 					#unassigned-sort-menu(v-if="showUnassignedSortMenu")
