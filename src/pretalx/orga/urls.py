@@ -659,11 +659,12 @@ urlpatterns = [
                     schedule.ScheduleExportDownloadView.as_view(),
                     name="schedule.export.download",
                 ),
-                path(
-                    "schedule/release",
-                    schedule.ScheduleReleaseView.as_view(),
-                    name="schedule.release",
-                ),
+                # Releases are not used
+                #path(
+                #    "schedule/release",
+                #    schedule.ScheduleReleaseView.as_view(),
+                #    name="schedule.release",
+                #),
                 path(
                     "schedule/quick/<code>/",
                     schedule.QuickScheduleView.as_view(),

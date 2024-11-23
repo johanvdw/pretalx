@@ -108,6 +108,7 @@ export default {
 			isUnassigning: false,
 			locales: ["en"],
 			unassignedFilterString: '',
+			unassignedFilterTrack: '',
 			unassignedSort: 'title',
 			unassignedSortDirection: 1,  // asc
 			showUnassignedSortMenu: false,
@@ -149,7 +150,7 @@ export default {
 		unscheduled () {
 			if (!this.schedule) return
 			let sessions = []
-			for (const session of this.schedule.talks.filter(s => !s.start || !s.room)) {
+			for (const session of this.schedule.talks.filter(s => (!s.start || !s.room))) {
 				sessions.push({
 					id: session.id,
 					code: session.code,
@@ -161,12 +162,9 @@ export default {
 					state: session.state,
 				})
 			}
-			if (this.unassignedFilterString.length) {
-				sessions = sessions.filter(s => {
-					const title = getLocalizedString(s.title)
-					const speakers = s.speakers?.map(s => s.name).join(', ') || ''
-					return title.toLowerCase().includes(this.unassignedFilterString.toLowerCase()) || speakers.toLowerCase().includes(this.unassignedFilterString.toLowerCase())
-				})
+			if (this.unassignedFilterTrack) {
+				console.log(this.unassignedFilterTrack);
+				sessions = sessions.filter(s => s.track.id==this.unassignedFilterTrack)
 			}
 			// Sort by this.unassignedSort, this.unassignedSortDirection (1 or -1)
 			sessions = sessions.sort((a, b) => {
@@ -555,4 +553,7 @@ export default {
 							padding: 0
 		.warning
 			color: #b23e65
+.title select#filter-track {
+			max-width: 100%;
+		}
 </style>
