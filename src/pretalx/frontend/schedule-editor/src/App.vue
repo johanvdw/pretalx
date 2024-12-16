@@ -60,7 +60,7 @@
 						.data-row.form-control.form-group.row
 							label.data-label.col-form-label.col-md-3 {{ $t('Duration') }}
 							.col-md-9.number.input-group
-								input(v-model="editorSession.duration", type="number", min="1", max="1440", step="1", :required="true")
+								input(v-model="editorSession.duration", type="number", min="5", max="1440", step="5", :required="true")
 								.input-group-append
 									span.input-group-text {{ $t('minutes') }}
 
