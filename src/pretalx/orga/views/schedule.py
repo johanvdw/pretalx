@@ -460,12 +460,14 @@ class TalkUpdate(PermissionRequired, View):
         if not talk:
             return JsonResponse({"error": "Talk not found"})
         data = json.loads(request.body.decode())
-        print(data)
         if data.get("start"):
             duration = talk.duration
             talk.start = dateutil.parser.parse(data.get("start"))
             if data.get("end"):
                 talk.end = dateutil.parser.parse(data["end"])
+                duration = (talk.end - talk.start).total_seconds() / 60
+                if duration % 5 !=0:
+                    return JsonResponse({"error": "Duration must me multiple of 5"})
             elif data.get("duration"):
                 if data.get("duration") %5 != 0:
                     return JsonResponse({"error": "Duration must me multiple of 5"})
